@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+	.glass-card {
+		@apply bg-canvas border border-surface-strong rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)];
+	}
+	.mono-tile {
+		@apply font-metrics-mono text-metrics-mono bg-canvas-soft border border-surface-strong p-xl rounded-lg;
+	}
+}
