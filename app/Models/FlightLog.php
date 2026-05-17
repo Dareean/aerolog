@@ -14,6 +14,8 @@ class FlightLog extends Model
         'flight_duration',
         'flight_date',
         'notes',
+        'cruise_altitude',
+        'landing_rate',
     ];
 
     public function user()

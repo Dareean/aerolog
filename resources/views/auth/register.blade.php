@@ -1,72 +1,74 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<x-app-layout :noNav="true">
+    <div class="min-h-screen flex items-center justify-center bg-[#fcf9f8] py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-[480px] bg-canvas border border-surface-strong rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-8 sm:p-10">
+            <!-- Logo -->
+            <div class="text-center mb-6">
+                <span class="font-display-sm text-[20px] font-bold tracking-tighter text-primary">AeroLog</span>
+            </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <!-- Headers -->
+            <div class="text-center mb-8">
+                <h1 class="font-display-md text-[28px] font-bold text-primary mb-2 tracking-tight">Create an account</h1>
+                <p class="font-body-md text-[15px] text-on-surface-variant">Join the next generation of flight logging.</p>
+            </div>
+
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <!-- Name -->
+                <div class="mb-5 text-left">
+                    <label for="name" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Full Name</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="Capt. John Doe" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                    <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm text-[#ba1a1a]" />
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-5 text-left">
+                    <label for="email" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Email address</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" placeholder="pilot@aerolog.com" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-[#ba1a1a]" />
+                </div>
+
+                <!-- Role -->
+                <div class="mb-5 text-left">
+                    <label for="role" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Role</label>
+                    <select id="role" name="role" required class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary bg-white shadow-sm transition-colors">
+                        <option value="">-- Select Role --</option>
+                        <option value="pilot" {{ old('role') == 'pilot' ? 'selected' : '' }}>Pilot</option>
+                        <option value="dispatcher" {{ old('role') == 'dispatcher' ? 'selected' : '' }}>Dispatcher</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('role')" class="mt-2 text-sm text-[#ba1a1a]" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Password</label>
+                        <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md tracking-widest text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-[#ba1a1a]" />
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="password_confirmation" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Confirm Password</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md tracking-widest text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-sm text-[#ba1a1a]" />
+                    </div>
+                </div>
+
+                <!-- Sign Up Button -->
+                <div class="mt-2">
+                    <button type="submit" class="w-full bg-primary text-on-primary h-[48px] rounded-lg font-button-label text-[15px] font-medium hover:bg-[#171717] transition-colors flex items-center justify-center shadow-sm">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 border-t border-surface-strong pt-6 text-center">
+                <p class="text-[14px] text-on-surface-variant">
+                    Already registered? <a href="{{ route('login') }}" class="font-medium text-[#0d74ce] hover:underline">Sign in to AeroLog</a>
+                </p>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Role -->
-        <div>
-            <x-input-label for="role" :value="__('Role')" />
-            <select
-                id="role"
-                name="role"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                required
-            >
-                <option value="">-- Pilih Role --</option>
-                <option value="pilot" {{ old('role') == 'pilot' ? 'selected' : '' }}>
-                    Pilot
-                </option>
-                <option value="dispatcher" {{ old('role') == 'dispatcher' ? 'selected' : '' }}>
-                    Dispatcher
-                </option>
-            </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</x-app-layout>

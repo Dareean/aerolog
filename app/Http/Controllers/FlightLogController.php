@@ -35,6 +35,8 @@ class FlightLogController extends Controller
             'fuel_consumption' => 'required|numeric',
             'flight_duration' => 'required|integer',
             'flight_date' => 'required|date',
+            'cruise_altitude' => 'nullable|string',
+            'landing_rate' => 'nullable|integer',
             'notes' => 'nullable|string',
         ]);
 
@@ -43,8 +45,8 @@ class FlightLogController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('flight-logs.index')
-            ->with('success', 'Log penerbangan berhasil ditambahkan!');
+        return redirect()->route('dashboard')
+            ->with('success', 'Flight log submitted successfully!');
     }
 
     public function show(FlightLog $flightLog)
