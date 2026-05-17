@@ -9,11 +9,11 @@
                 <a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition cursor-pointer active:scale-95" href="#dispatcher">Dispatcher</a>
             </div>
             <div class="flex items-center gap-md">
-                <div class="flex gap-sm text-on-surface-variant">
+                <div class="hidden md:flex gap-sm text-on-surface-variant">
                     <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">settings</span>
                     <span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
                 </div>
-                <a href="{{ route('login') }}" class="bg-primary text-on-primary h-[40px] px-lg rounded-lg font-button-label text-button-label hover:bg-surface-dark transition-colors">Sign In</a>
+                <a href="{{ route('login') }}" class="bg-primary text-on-primary h-[40px] px-lg rounded-lg font-button-label text-button-label hover:bg-surface-dark transition-colors inline-flex items-center justify-center">Sign In</a>
             </div>
         </div>
     </nav>
@@ -25,11 +25,11 @@
                 <!-- Hero -->
                 <div class="relative w-full rounded-xl mt-xl overflow-hidden bg-gradient-to-b from-sky-gradient-start to-canvas pt-xxl px-lg md:px-xxl text-center">
                     <div class="max-w-3xl mx-auto mb-xl">
-                        <h1 class="font-display-mega text-display-mega text-primary mb-lg">Next-Generation Flight Logging. Powered by AI.</h1>
+                        <h1 class="font-display-mega text-[32px] md:text-display-mega text-primary mb-lg leading-tight md:leading-none">Next-Generation Flight Logging. Powered by AI.</h1>
                         <p class="font-display-sm text-display-sm text-on-surface-variant font-normal">Abandon paper logbooks. AeroLog delivers predictive analytics, fatigue monitoring, and instant telemetry directly from the flight deck.</p>
                     </div>
 
-                    <div class="w-full max-w-4xl mx-auto h-[360px] bg-canvas-soft border-t border-x border-surface-strong rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                    <div class="w-full max-w-4xl mx-auto h-[240px] md:h-[360px] bg-canvas-soft border-t border-x border-surface-strong rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] relative overflow-hidden">
                         <div class="absolute inset-0 bg-cover bg-center opacity-80" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0IvJ6uB6aYa3BrvYG3bYJpod6bzB7jgesFRD8mhc1XUkfT1DEX3k2V7fxIVVLlxx6PKiRy3aBgQ8hA9IheJyfaehdWG13XQ1Le5oH8C4HiJ6Qysv_IthJi-p5BQb9MLzX6_r4GJ5r0FOJERygWrnR7mVnKpUP2jLMGC4bqxPQe4cEdajA1X-uBnK1ucuO8RHkccoIEvxOkfWXhA4cjIkZSg5cO9qecWIamy_YWC3sPO0AgGpxD2goxxh8Ekam4UWez7K-ZmqDZQI')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-canvas to-transparent"></div>
                     </div>
@@ -250,6 +250,7 @@
             function switchView(viewId) {
                 Object.values(views).forEach(el => { if(el){ el.classList.add('hidden'); el.classList.remove('block'); } });
                 if(views[viewId]){ views[viewId].classList.remove('hidden'); views[viewId].classList.add('block'); }
+                window.scrollTo(0, 0);
                 links.forEach(link => {
                     const targetId = link.getAttribute('href').substring(1);
                     if (targetId === viewId) {
