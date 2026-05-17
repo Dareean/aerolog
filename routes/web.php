@@ -17,6 +17,4 @@ Route::get('/flights/create', function () {
     return view('flights.create');
 })->name('flights.create');
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+require __DIR__.'/auth.php';
