@@ -15,11 +15,18 @@
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
-                <!-- Name -->
-                <div class="mb-5 text-left">
-                    <label for="name" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Full Name</label>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="Capt. John Doe" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary placeholder-[#999999] shadow-sm transition-colors" />
-                    <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm text-[#ba1a1a]" />
+                <!-- Username & Full Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 text-left">
+                    <div>
+                        <label for="username" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Username</label>
+                        <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus autocomplete="username" placeholder="pilot123" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                        <x-input-error :messages="$errors->get('username')" class="mt-2 text-sm text-[#ba1a1a]" />
+                    </div>
+                    <div>
+                        <label for="full_name" class="block font-title-md text-[14px] font-semibold text-on-surface mb-2">Full Name</label>
+                        <input id="full_name" type="text" name="full_name" value="{{ old('full_name') }}" required autocomplete="name" placeholder="Capt. John Doe" class="w-full h-[44px] px-3 border border-[#e5e2e1] rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-md text-primary placeholder-[#999999] shadow-sm transition-colors" />
+                        <x-input-error :messages="$errors->get('full_name')" class="mt-2 text-sm text-[#ba1a1a]" />
+                    </div>
                 </div>
 
                 <!-- Email Address -->

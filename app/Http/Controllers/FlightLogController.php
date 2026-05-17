@@ -30,18 +30,45 @@ class FlightLogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'route_id' => 'required|exists:routes,id',
+            'origin_airport' => 'required|string',
+            'destination_airport' => 'required|string',
             'aircraft_code' => 'required|string',
             'fuel_consumption' => 'required|numeric',
-            'flight_duration' => 'required|integer',
-            'flight_date' => 'required|date',
+            'departure_time' => 'required|date',
+            'arrival_time' => 'required|date|after:departure_time',
             'cruise_altitude' => 'nullable|string',
             'landing_rate' => 'nullable|integer',
             'notes' => 'nullable|string',
         ]);
 
+        $departure = \Carbon\Carbon::parse($request->departure_time);
+        $arrival = \Carbon\Carbon::parse($request->arrival_time);
+        $durationMinutes = $departure->diffInMinutes($arrival);
+        $flightDate = $departure->toDateString();
+
+        $route = Route::firstOrCreate(
+            [
+                'origin_airport' => $request->origin_airport,
+                'destination_airport' => $request->destination_airport,
+            ],
+            [
+                'route_code' => 'AL-USR',
+                'airline_name' => 'AeroLog Airlines',
+                'estimated_duration' => $durationMinutes, // Use actual duration as estimate if new
+            ]
+        );
+
         FlightLog::create([
-            ...$request->all(),
+            'route_id' => $route->id,
+            'aircraft_code' => $request->aircraft_code,
+            'fuel_consumption' => $request->fuel_consumption,
+            'flight_duration' => $durationMinutes,
+            'departure_time' => $departure,
+            'arrival_time' => $arrival,
+            'flight_date' => $flightDate,
+            'cruise_altitude' => $request->cruise_altitude,
+            'landing_rate' => $request->landing_rate,
+            'notes' => $request->notes,
             'user_id' => auth()->id(),
         ]);
 

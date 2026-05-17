@@ -10,27 +10,43 @@ class RouteSeeder extends Seeder
     public function run(): void
     {
         Route::create([
-            'route_code' => 'GA-101',
-            'origin_airport' => 'WAAA',
-            'destination_airport' => 'WIII',
-            'airline_name' => 'Garuda Indonesia',
-            'estimated_duration' => 120,
+            'route_code' => 'AL-101',
+            'origin_airport' => 'WIII (Soekarno Hatta)',
+            'destination_airport' => 'WAFF (Mutiara Sis Aljufri)',
+            'airline_name' => 'AeroLog Airlines',
+            'estimated_duration' => 150,
         ]);
 
         Route::create([
-            'route_code' => 'GA-202',
-            'origin_airport' => 'WIII',
-            'destination_airport' => 'WADD',
-            'airline_name' => 'Garuda Indonesia',
+            'route_code' => 'AL-202',
+            'origin_airport' => 'WARR (Juanda)',
+            'destination_airport' => 'WIII (Soekarno Hatta)',
+            'airline_name' => 'AeroLog Airlines',
             'estimated_duration' => 90,
         ]);
 
         Route::create([
-            'route_code' => 'GA-303',
-            'origin_airport' => 'WAAA',
-            'destination_airport' => 'WABB',
-            'airline_name' => 'Garuda Indonesia',
-            'estimated_duration' => 60,
+            'route_code' => 'AL-303',
+            'origin_airport' => 'WSSS (Changi)',
+            'destination_airport' => 'RJTT (Haneda)',
+            'airline_name' => 'AeroLog Airlines',
+            'estimated_duration' => 420,
+        ]);
+
+        Route::create([
+            'route_code' => 'AL-404',
+            'origin_airport' => 'RJAA (Narita)',
+            'destination_airport' => 'WSSS (Changi)',
+            'airline_name' => 'AeroLog Airlines',
+            'estimated_duration' => 430,
+        ]);
+
+        Route::create([
+            'route_code' => 'AL-505',
+            'origin_airport' => 'WAFF (Mutiara Sis Aljufri)',
+            'destination_airport' => 'WARR (Juanda)',
+            'airline_name' => 'AeroLog Airlines',
+            'estimated_duration' => 110,
         ]);
     }
 }

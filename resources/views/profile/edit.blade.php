@@ -1,29 +1,25 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+<x-sidebar-layout title="Settings">
+    <section>
+        <header class="mb-xl">
+            <h1 class="font-display-lg text-[28px] font-bold text-primary mb-1">Account Settings</h1>
+            <p class="font-body-md text-on-surface-variant">Manage your profile, password, and security preferences.</p>
+        </header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="space-y-6">
+            <!-- Profile Information -->
+            <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8">
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <!-- Update Password -->
+            <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
         </div>
-    </div>
-</x-app-layout>
+    </section>
+</x-sidebar-layout>

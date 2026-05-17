@@ -15,7 +15,14 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'pilot') {
-            $routes = Route::all();
+            $airports = [
+                'WSSS (Changi)',
+                'RJTT (Haneda)',
+                'RJAA (Narita)',
+                'WAFF (Mutiara Sis Aljufri)',
+                'WARR (Juanda)',
+                'WIII (Soekarno Hatta)'
+            ];
             
             $flightLogs = FlightLog::where('user_id', $user->id)->get();
             $totalFlightHours = $flightLogs->sum('flight_duration') / 60; // Assuming duration is in minutes
@@ -24,7 +31,7 @@ class DashboardController extends Controller
             // Fatigue status logic (dummy basic logic)
             $fatigueStatus = $totalFlightHours > 100 ? 'WARNING' : 'CLEARED TO FLY';
             
-            return view('dashboard', compact('routes', 'totalFlightHours', 'avgLandingRate', 'fatigueStatus'));
+            return view('dashboard', compact('airports', 'totalFlightHours', 'avgLandingRate', 'fatigueStatus', 'flightLogs'));
             
         } elseif ($user->role === 'dispatcher') {
             $recentLogs = FlightLog::with(['user', 'route'])->latest()->take(20)->get();

@@ -12,6 +12,8 @@ class FlightLog extends Model
         'aircraft_code',
         'fuel_consumption',
         'flight_duration',
+        'departure_time',
+        'arrival_time',
         'flight_date',
         'notes',
         'cruise_altitude',

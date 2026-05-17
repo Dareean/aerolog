@@ -18,7 +18,7 @@
         <section>
             <header class="mb-xl flex justify-between items-end">
                 <div>
-                    <h1 class="font-display-lg text-[28px] font-bold text-primary mb-1">Welcome back, {{ Auth::user()->name }}</h1>
+                    <h1 class="font-display-lg text-[28px] font-bold text-primary mb-1">Welcome back, {{ Auth::user()->full_name }}</h1>
                     <p class="font-body-md text-on-surface-variant">Your next scheduled duty: <span class="font-metrics-mono text-primary font-medium">WAAA</span> - <span class="font-metrics-mono text-primary font-medium">WRSJ</span></p>
                 </div>
                 <button class="bg-primary text-on-primary h-[40px] px-lg rounded-lg font-button-label text-[14px] font-medium hover:bg-[#171717] transition-colors shadow-sm">Start Preflight</button>
@@ -55,9 +55,6 @@
                     <h2 class="font-title-md text-[18px] font-bold text-primary mb-6 pb-4 border-b border-surface-strong">Log New Sector</h2>
                     <form class="space-y-6" method="POST" action="{{ route('flight-logs.store') }}">
                         @csrf
-                        <input type="hidden" name="flight_date" value="{{ date('Y-m-d') }}">
-                        <input type="hidden" name="flight_duration" value="120"> <!-- Default or could be dynamic -->
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">FLIGHT NO</label>
@@ -65,12 +62,31 @@
                             </div>
                             <div>
                                 <label class="block font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">ROUTE</label>
-                                <select name="route_id" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
-                                    <option value="" disabled selected>Select Route...</option>
-                                    @foreach($routes ?? [] as $route)
-                                        <option value="{{ $route->id }}">{{ $route->origin_airport }} -> {{ $route->destination_airport }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="flex items-center gap-2">
+                                    <select name="origin_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
+                                        <option value="" disabled selected>Origin</option>
+                                        @foreach($airports ?? [] as $airport)
+                                            <option value="{{ $airport }}">{{ $airport }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="material-symbols-outlined text-on-surface-variant text-[18px]">arrow_forward</span>
+                                    <select name="destination_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
+                                        <option value="" disabled selected>Dest.</option>
+                                        @foreach($airports ?? [] as $airport)
+                                            <option value="{{ $airport }}">{{ $airport }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">DEPARTURE TIME (LOCAL)</label>
+                                <input name="departure_time" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" type="datetime-local" required/>
+                            </div>
+                            <div>
+                                <label class="block font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">ARRIVAL TIME (LOCAL)</label>
+                                <input name="arrival_time" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" type="datetime-local" required/>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -110,6 +126,57 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Pilot Flight History Table -->
+            <div class="mt-8 bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-surface-strong bg-[#fcf9f8] flex justify-between items-center">
+                    <h2 class="font-title-md text-[16px] font-bold text-primary">Your Recent Flights</h2>
+                </div>
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr class="bg-white border-b border-surface-strong font-label-caps text-[11px] font-semibold tracking-wider text-on-surface-variant">
+                                <th class="p-4">TIMING</th>
+                                <th class="p-4">FLIGHT NO</th>
+                                <th class="p-4">ROUTE</th>
+                                <th class="p-4">LANDING SCORE</th>
+                                <th class="p-4">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-body-sm text-[14px] divide-y divide-surface-strong bg-white">
+                            @forelse($flightLogs->sortByDesc('flight_date')->take(10) ?? [] as $log)
+                                @php
+                                    $isHardLanding = $log->landing_rate && $log->landing_rate < -400;
+                                @endphp
+                                <tr class="hover:bg-[#fcf9f8] transition-colors {{ $isHardLanding ? 'bg-[#fff2f2]/40' : '' }}">
+                                    <td class="p-4 text-on-surface-variant">
+                                        <div class="font-medium text-primary">{{ \Carbon\Carbon::parse($log->departure_time)->format('M d, Y') }}</div>
+                                        <div class="text-[12px]">{{ \Carbon\Carbon::parse($log->departure_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($log->arrival_time)->format('H:i') }}</div>
+                                    </td>
+                                    <td class="p-4 font-medium text-primary">{{ $log->aircraft_code ?? 'Unknown' }}</td>
+                                    <td class="p-4 font-metrics-mono text-on-surface-variant">
+                                        {{ $log->route->origin_airport ?? 'N/A' }} - {{ $log->route->destination_airport ?? 'N/A' }}
+                                    </td>
+                                    <td class="p-4 font-metrics-mono {{ $isHardLanding ? 'text-[#ba1a1a] font-bold' : 'text-primary font-medium' }}">
+                                        {{ $log->landing_rate ?? 'N/A' }} fpm
+                                    </td>
+                                    <td class="p-4">
+                                        @if($isHardLanding)
+                                            <span class="inline-flex px-2.5 py-1 rounded-full bg-[#fff2f2] text-[#ba1a1a] font-label-caps text-[10px] font-bold tracking-wider">HARD LANDING</span>
+                                        @else
+                                            <span class="inline-flex px-2.5 py-1 rounded-full bg-[#e6f4ea] text-[#137333] font-label-caps text-[10px] font-bold tracking-wider">NOMINAL</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-on-surface-variant">You haven't logged any flights yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
     @elseif(Auth::user()->role === 'dispatcher')
@@ -126,15 +193,12 @@
                 <div class="lg:col-span-3 bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col">
                     <div class="p-6 border-b border-surface-strong bg-[#fcf9f8] flex justify-between items-center">
                         <h2 class="font-title-md text-[16px] font-bold text-primary">Recent Logs</h2>
-                        <button class="bg-white border border-[#e5e2e1] h-[36px] px-4 rounded-md text-[13px] font-medium text-primary hover:bg-[#fcf9f8] shadow-sm flex items-center gap-1 transition-colors">
-                            <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
-                        </button>
                     </div>
                     <div class="overflow-x-auto flex-grow">
                         <table class="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr class="bg-white border-b border-surface-strong font-label-caps text-[11px] font-semibold tracking-wider text-on-surface-variant">
-                                    <th class="p-4">DATE</th>
+                                    <th class="p-4">TIMING</th>
                                     <th class="p-4">PILOT</th>
                                     <th class="p-4">ROUTE</th>
                                     <th class="p-4">LANDING SCORE</th>
@@ -147,8 +211,11 @@
                                         $isHardLanding = $log->landing_rate && $log->landing_rate < -400;
                                     @endphp
                                     <tr class="hover:bg-[#fcf9f8] transition-colors {{ $isHardLanding ? 'bg-[#fff2f2]/40' : '' }}">
-                                        <td class="p-4 text-on-surface-variant">{{ \Carbon\Carbon::parse($log->flight_date)->format('M d, H:i\Z') }}</td>
-                                        <td class="p-4 font-medium text-primary">{{ $log->user->name ?? 'Unknown Pilot' }}</td>
+                                        <td class="p-4 text-on-surface-variant">
+                                        <div class="font-medium text-primary">{{ \Carbon\Carbon::parse($log->departure_time)->format('M d, Y') }}</div>
+                                        <div class="text-[12px]">{{ \Carbon\Carbon::parse($log->departure_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($log->arrival_time)->format('H:i') }}</div>
+                                    </td>
+                                        <td class="p-4 font-medium text-primary">{{ $log->user->full_name ?? 'Unknown Pilot' }}</td>
                                         <td class="p-4 font-metrics-mono text-on-surface-variant">
                                             {{ $log->route->origin_airport ?? 'N/A' }} - {{ $log->route->destination_airport ?? 'N/A' }}
                                         </td>

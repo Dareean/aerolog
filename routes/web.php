@@ -17,4 +17,11 @@ Route::get('/flights/create', function () {
     return view('flights.create');
 })->name('flights.create');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    Route::post('/flight-logs', [FlightLogController::class, 'store'])->name('flight-logs.store');
+});
+
 require __DIR__.'/auth.php';

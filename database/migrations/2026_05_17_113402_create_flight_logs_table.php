@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('aircraft_code');
             $table->float('fuel_consumption');
             $table->integer('flight_duration');
+            $table->dateTime('departure_time')->nullable();
+            $table->dateTime('arrival_time')->nullable();
             $table->date('flight_date');
             $table->text('notes')->nullable();
             $table->timestamps();

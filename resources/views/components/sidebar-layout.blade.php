@@ -22,11 +22,11 @@
         <div class="px-6 py-6 border-b border-surface-strong mb-4">
             <div class="flex items-center gap-3 mb-2">
                 <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold">
-                    {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                    {{ substr(Auth::user()->full_name ?? 'U', 0, 1) }}
                 </div>
                 <div class="overflow-hidden">
-                    <div class="font-title-sm text-primary truncate">{{ Auth::user()->name ?? 'User' }}</div>
-                    <div class="font-label-caps text-label-caps text-on-surface-variant truncate uppercase">{{ Auth::user()->role ?? 'Role' }}</div>
+                    <div class="font-title-sm text-primary truncate">{{ Auth::user()->full_name ?? 'User' }}</div>
+                    <div class="font-label-caps text-label-caps text-on-surface-variant truncate uppercase">{{ '@' . (Auth::user()->username ?? 'username') }} &bull; {{ Auth::user()->role ?? 'Role' }}</div>
                 </div>
             </div>
         </div>
@@ -38,27 +38,9 @@
                 Overview
             </a>
             
-            @if((Auth::user()->role ?? '') === 'pilot')
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
-                    <span class="material-symbols-outlined text-[20px]">flight_takeoff</span>
-                    Log New Sector
-                </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
-                    <span class="material-symbols-outlined text-[20px]">history</span>
-                    Flight History
-                </a>
-            @elseif((Auth::user()->role ?? '') === 'dispatcher')
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
-                    <span class="material-symbols-outlined text-[20px]">monitoring</span>
-                    Live Telemetry
-                </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
-                    <span class="material-symbols-outlined text-[20px]">group</span>
-                    Crew Roster
-                </a>
-            @endif
+
             
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 Settings
             </a>
