@@ -33,14 +33,12 @@
 
         <!-- Navigation -->
         <nav class="flex-grow px-4 space-y-1 overflow-y-auto">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#f0f4f8] text-[#0d74ce] font-semibold text-[14px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('dashboard') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">dashboard</span>
                 Overview
             </a>
             
-
-            
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium text-[14px]">
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 Settings
             </a>

@@ -12,11 +12,11 @@ class FlightLogSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get the pilot user to attach the logs to
-        $pilot = User::where('role', 'pilot')->first();
+        // Get all pilot users to attach the logs to randomly
+        $pilots = User::where('role', 'pilot')->get();
         
-        // Ensure we have a pilot, if not we skip
-        if (!$pilot) {
+        // Ensure we have pilots, if not we skip
+        if ($pilots->isEmpty()) {
             return;
         }
 
@@ -27,7 +27,7 @@ class FlightLogSeeder extends Seeder
         }
 
         FlightLog::create([
-            'user_id' => $pilot->id,
+            'user_id' => $pilots->random()->id,
             'route_id' => $routes->random()->id,
             'aircraft_code' => 'AL-8492',
             'fuel_consumption' => 12400.5,
@@ -41,7 +41,7 @@ class FlightLogSeeder extends Seeder
         ]);
 
         FlightLog::create([
-            'user_id' => $pilot->id,
+            'user_id' => $pilots->random()->id,
             'route_id' => $routes->random()->id,
             'aircraft_code' => 'AL-1022',
             'fuel_consumption' => 8500.2,
@@ -55,7 +55,7 @@ class FlightLogSeeder extends Seeder
         ]);
 
         FlightLog::create([
-            'user_id' => $pilot->id,
+            'user_id' => $pilots->random()->id,
             'route_id' => $routes->random()->id,
             'aircraft_code' => 'AL-4001',
             'fuel_consumption' => 14000.0,
@@ -69,7 +69,7 @@ class FlightLogSeeder extends Seeder
         ]);
 
         FlightLog::create([
-            'user_id' => $pilot->id,
+            'user_id' => $pilots->random()->id,
             'route_id' => $routes->random()->id,
             'aircraft_code' => 'AL-9099',
             'fuel_consumption' => 6200.0,

@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     
     Route::post('/flight-logs', [FlightLogController::class, 'store'])->name('flight-logs.store');
+    
+    Route::post('/api/ai-briefing', [\App\Http\Controllers\AIBriefingController::class, 'generate'])->name('ai-briefing.generate');
 });
 
 require __DIR__.'/auth.php';

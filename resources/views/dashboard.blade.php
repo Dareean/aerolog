@@ -19,9 +19,7 @@
             <header class="mb-xl flex justify-between items-end">
                 <div>
                     <h1 class="font-display-lg text-[28px] font-bold text-primary mb-1">Welcome back, {{ Auth::user()->full_name }}</h1>
-                    <p class="font-body-md text-on-surface-variant">Your next scheduled duty: <span class="font-metrics-mono text-primary font-medium">WAAA</span> - <span class="font-metrics-mono text-primary font-medium">WRSJ</span></p>
                 </div>
-                <button class="bg-primary text-on-primary h-[40px] px-lg rounded-lg font-button-label text-[14px] font-medium hover:bg-[#171717] transition-colors shadow-sm">Start Preflight</button>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-xl">
@@ -63,14 +61,14 @@
                             <div>
                                 <label class="block font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">ROUTE</label>
                                 <div class="flex items-center gap-2">
-                                    <select name="origin_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
+                                    <select name="origin_airport" id="origin_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
                                         <option value="" disabled selected>Origin</option>
                                         @foreach($airports ?? [] as $airport)
                                             <option value="{{ $airport }}">{{ $airport }}</option>
                                         @endforeach
                                     </select>
                                     <span class="material-symbols-outlined text-on-surface-variant text-[18px]">arrow_forward</span>
-                                    <select name="destination_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
+                                    <select name="destination_airport" id="destination_airport" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-2 text-[14px] focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-metrics-mono text-primary shadow-sm bg-white" required>
                                         <option value="" disabled selected>Dest.</option>
                                         @foreach($airports ?? [] as $airport)
                                             <option value="{{ $airport }}">{{ $airport }}</option>
@@ -115,13 +113,13 @@
                         <span class="material-symbols-outlined text-[#0d74ce]">memory</span>
                         <h3 class="font-title-md text-[16px] font-bold text-primary">AI Route Briefing</h3>
                     </div>
-                    <p class="font-body-md text-[14px] text-on-surface-variant mb-6 leading-relaxed flex-grow">
-                        Expected crosswinds at <span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">WRSJ</span>. Recommend FL330 initially to avoid headwind core, stepping up to <span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">35,000 ft</span> over MAKAS. This profile improves fuel efficiency by est. 2.4%.
+                    <p id="ai_briefing_text" class="font-body-md text-[14px] text-on-surface-variant mb-6 leading-relaxed flex-grow">
+                        Please select an Origin and Destination to generate a live AI Briefing.
                     </p>
                     <div class="bg-white p-4 rounded-lg border border-[#e5e2e1] shadow-sm">
                         <div class="flex justify-between items-center">
                             <span class="font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant">PREDICTED SAVINGS</span>
-                            <span class="font-metrics-mono text-[16px] font-bold text-[#137333]">+240 kg</span>
+                            <span id="ai_briefing_savings" class="font-metrics-mono text-[16px] font-bold text-[#137333]">+0 kg</span>
                         </div>
                     </div>
                 </div>
@@ -256,14 +254,14 @@
                         <li class="flex justify-between items-center px-1">
                             <div class="flex items-center gap-3">
                                 <div class="w-7 h-7 rounded-full bg-[#fcf9f8] flex items-center justify-center font-label-caps text-[12px] font-medium text-on-surface-variant">2</div>
-                                <span class="font-body-sm text-[14px] font-medium text-primary">Capt. M. Rossi</span>
+                                <span class="font-body-sm text-[14px] font-medium text-primary">Capt. Tenri</span>
                             </div>
                             <span class="font-metrics-mono text-[14px] font-medium text-[#137333]">+3.8%</span>
                         </li>
                         <li class="flex justify-between items-center px-1">
                             <div class="flex items-center gap-3">
                                 <div class="w-7 h-7 rounded-full bg-[#fcf9f8] flex items-center justify-center font-label-caps text-[12px] font-medium text-on-surface-variant">3</div>
-                                <span class="font-body-sm text-[14px] font-medium text-primary">F/O T. Baker</span>
+                                <span class="font-body-sm text-[14px] font-medium text-primary">Capt. Dimas</span>
                             </div>
                             <span class="font-metrics-mono text-[14px] font-medium text-[#137333]">+2.9%</span>
                         </li>
@@ -279,4 +277,56 @@
             <p class="font-body-md text-on-surface-variant max-w-md mx-auto">Your account does not have a recognized role. Please contact your system administrator.</p>
         </section>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const originSelect = document.getElementById('origin_airport');
+            const destSelect = document.getElementById('destination_airport');
+            const briefingText = document.getElementById('ai_briefing_text');
+            const savingsText = document.getElementById('ai_briefing_savings');
+
+            if (originSelect && destSelect) {
+                const fetchBriefing = async () => {
+                    const origin = originSelect.value;
+                    const destination = destSelect.value;
+
+                    if (origin && destination) {
+                        // Show loading state
+                        briefingText.innerHTML = '<span class="flex items-center gap-2 text-[#0d74ce]"><span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Analyzing route dynamics...</span>';
+                        savingsText.innerText = '...';
+
+                        try {
+                            const response = await fetch('{{ route('ai-briefing.generate') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({ origin, destination })
+                            });
+
+                            const data = await response.json();
+                            if (response.ok) {
+                                // Add styling to make it look technical
+                                let formattedBriefing = data.briefing.replace(new RegExp(origin, 'g'), `<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${origin}</span>`);
+                                formattedBriefing = formattedBriefing.replace(new RegExp(destination, 'g'), `<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${destination}</span>`);
+                                
+                                briefingText.innerHTML = formattedBriefing;
+                                savingsText.innerText = `+${data.savings} kg`;
+                            } else {
+                                briefingText.innerText = data.briefing || 'Failed to generate briefing.';
+                                savingsText.innerText = '+0 kg';
+                            }
+                        } catch (error) {
+                            briefingText.innerText = 'Connection to AI dispatch failed.';
+                            savingsText.innerText = '+0 kg';
+                        }
+                    }
+                };
+
+                originSelect.addEventListener('change', fetchBriefing);
+                destSelect.addEventListener('change', fetchBriefing);
+            }
+        });
+    </script>
 </x-sidebar-layout>
