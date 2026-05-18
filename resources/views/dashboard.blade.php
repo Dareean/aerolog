@@ -131,6 +131,9 @@
                     <h2 class="font-title-md text-[16px] font-bold text-primary">Your Recent Flights</h2>
                 </div>
                 <div class="overflow-x-auto flex-grow">
+                    @php
+                        $pilotFlightLogs = collect($flightLogs ?? [])->sortByDesc('flight_date')->take(10);
+                    @endphp
                     <table class="w-full text-left border-collapse min-w-[700px]">
                         <thead>
                             <tr class="bg-white border-b border-surface-strong font-label-caps text-[11px] font-semibold tracking-wider text-on-surface-variant">
@@ -142,7 +145,7 @@
                             </tr>
                         </thead>
                         <tbody class="font-body-sm text-[14px] divide-y divide-surface-strong bg-white">
-                            @forelse($flightLogs->sortByDesc('flight_date')->take(10) ?? [] as $log)
+                            @forelse($pilotFlightLogs as $log)
                                 @php
                                     $isHardLanding = $log->landing_rate && $log->landing_rate < -400;
                                 @endphp
@@ -187,6 +190,21 @@
                 </div>
             </header>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-xl">
+                <div class="bg-canvas border border-surface-strong rounded-xl p-6 shadow-sm">
+                    <div class="font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">ACTIVE PILOTS</div>
+                    <div class="text-[28px] font-bold text-primary tracking-tight">{{ count($pilots ?? []) }} <span class="text-[16px] font-medium text-on-surface-variant tracking-normal">personnel</span></div>
+                </div>
+                <div class="bg-canvas border border-surface-strong rounded-xl p-6 shadow-sm">
+                    <div class="font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">TOTAL FLIGHT LOGS</div>
+                    <div class="text-[28px] font-bold text-primary tracking-tight">{{ \App\Models\FlightLog::count() }} <span class="text-[16px] font-medium text-on-surface-variant tracking-normal">sectors</span></div>
+                </div>
+                <div class="bg-canvas border border-surface-strong rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                    <div class="font-label-caps text-[12px] font-semibold tracking-wider text-on-surface-variant mb-2">AVG FLEET LANDING RATE</div>
+                    <div class="text-[28px] font-bold text-primary tracking-tight">{{ number_format(\App\Models\FlightLog::avg('landing_rate') ?? 0, 0) }} <span class="text-[16px] font-medium text-on-surface-variant tracking-normal">fpm</span></div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div class="lg:col-span-3 bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col">
                     <div class="p-6 border-b border-surface-strong bg-[#fcf9f8] flex justify-between items-center">
@@ -206,19 +224,20 @@
                             <tbody class="font-body-sm text-[14px] divide-y divide-surface-strong bg-white">
                                 @forelse($recentLogs ?? [] as $log)
                                     @php
-                                        $isHardLanding = $log->landing_rate && $log->landing_rate < -400;
+                                        $landingRate = data_get($log, 'landing_rate');
+                                        $isHardLanding = $landingRate && $landingRate < -400;
                                     @endphp
                                     <tr class="hover:bg-[#fcf9f8] transition-colors {{ $isHardLanding ? 'bg-[#fff2f2]/40' : '' }}">
                                         <td class="p-4 text-on-surface-variant">
-                                        <div class="font-medium text-primary">{{ \Carbon\Carbon::parse($log->departure_time)->format('M d, Y') }}</div>
-                                        <div class="text-[12px]">{{ \Carbon\Carbon::parse($log->departure_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($log->arrival_time)->format('H:i') }}</div>
-                                    </td>
-                                        <td class="p-4 font-medium text-primary">{{ $log->user->full_name ?? 'Unknown Pilot' }}</td>
+                                            <div class="font-medium text-primary">{{ \Carbon\Carbon::parse(data_get($log, 'departure_time'))->format('M d, Y') }}</div>
+                                            <div class="text-[12px]">{{ \Carbon\Carbon::parse(data_get($log, 'departure_time'))->format('H:i') }} - {{ \Carbon\Carbon::parse(data_get($log, 'arrival_time'))->format('H:i') }}</div>
+                                        </td>
+                                        <td class="p-4 font-medium text-primary">{{ data_get($log, 'user.full_name', 'Unknown Pilot') }}</td>
                                         <td class="p-4 font-metrics-mono text-on-surface-variant">
-                                            {{ $log->route->origin_airport ?? 'N/A' }} - {{ $log->route->destination_airport ?? 'N/A' }}
+                                            {{ data_get($log, 'route.origin_airport', 'N/A') }} - {{ data_get($log, 'route.destination_airport', 'N/A') }}
                                         </td>
                                         <td class="p-4 font-metrics-mono {{ $isHardLanding ? 'text-[#ba1a1a] font-bold' : 'text-primary font-medium' }}">
-                                            {{ $log->landing_rate ?? 'N/A' }} fpm
+                                            {{ data_get($log, 'landing_rate', 'N/A') }} fpm
                                         </td>
                                         <td class="p-4">
                                             @if($isHardLanding)
@@ -237,35 +256,34 @@
                         </table>
                     </div>
                 </div>
-                
-                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-6 flex flex-col">
-                    <h2 class="font-title-md text-[16px] font-bold text-primary mb-4 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[#f59e0b]">military_tech</span> Efficiency Leaders
-                    </h2>
-                    <p class="font-body-sm text-[13px] text-on-surface-variant mb-6 pb-4 border-b border-surface-strong">Based on AI optimal route adherence (30 days).</p>
-                    <ul class="space-y-4">
-                        <li class="flex justify-between items-center bg-[#fcf9f8] p-3 rounded-lg border border-[#e5e2e1]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-7 h-7 rounded-full bg-white border border-[#e5e2e1] flex items-center justify-center font-label-caps text-[12px] font-bold text-primary shadow-sm">1</div>
-                                <span class="font-body-sm text-[14px] font-semibold text-primary">Capt. Dareean</span>
+
+                <!-- Pilot Roster Management -->
+                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-surface-strong bg-[#fcf9f8] flex justify-between items-center">
+                        <h2 class="font-title-md text-[16px] font-bold text-primary">Pilot Roster</h2>
+                    </div>
+                    <div class="p-4 flex-grow flex flex-col gap-3 overflow-y-auto max-h-[600px]">
+                        @forelse($pilots ?? [] as $pilot)
+                            <div class="p-4 border border-surface-strong rounded-lg bg-white flex flex-col gap-2 shadow-sm">
+                                <div class="flex justify-between items-start">
+                                    <div class="overflow-hidden">
+                                        <h3 class="font-bold text-primary text-[14px] truncate">{{ $pilot->full_name }}</h3>
+                                        <p class="font-metrics-mono text-[11px] text-on-surface-variant truncate">{{ $pilot->email }}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-[#e6f4ea] text-[#137333] font-label-caps text-[10px] font-bold tracking-wider">ACTIVE</span>
+                                    <div class="text-[11px] font-medium text-on-surface-variant">
+                                        {{ $pilot->flightLogs()->count() }} logs
+                                    </div>
+                                </div>
                             </div>
-                            <span class="font-metrics-mono text-[14px] font-bold text-[#137333]">+4.2%</span>
-                        </li>
-                        <li class="flex justify-between items-center px-1">
-                            <div class="flex items-center gap-3">
-                                <div class="w-7 h-7 rounded-full bg-[#fcf9f8] flex items-center justify-center font-label-caps text-[12px] font-medium text-on-surface-variant">2</div>
-                                <span class="font-body-sm text-[14px] font-medium text-primary">Capt. Tenri</span>
+                        @empty
+                            <div class="text-center py-6 text-on-surface-variant font-body-sm">
+                                No pilots currently registered.
                             </div>
-                            <span class="font-metrics-mono text-[14px] font-medium text-[#137333]">+3.8%</span>
-                        </li>
-                        <li class="flex justify-between items-center px-1">
-                            <div class="flex items-center gap-3">
-                                <div class="w-7 h-7 rounded-full bg-[#fcf9f8] flex items-center justify-center font-label-caps text-[12px] font-medium text-on-surface-variant">3</div>
-                                <span class="font-body-sm text-[14px] font-medium text-primary">Capt. Dimas</span>
-                            </div>
-                            <span class="font-metrics-mono text-[14px] font-medium text-[#137333]">+2.9%</span>
-                        </li>
-                    </ul>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </section>
@@ -284,6 +302,7 @@
             const destSelect = document.getElementById('destination_airport');
             const briefingText = document.getElementById('ai_briefing_text');
             const savingsText = document.getElementById('ai_briefing_savings');
+            const aiBriefingUrl = <?php echo json_encode(route('ai-briefing.generate')); ?>;
 
             if (originSelect && destSelect) {
                 const fetchBriefing = async () => {
@@ -296,7 +315,7 @@
                         savingsText.innerText = '...';
 
                         try {
-                            const response = await fetch('{{ route('ai-briefing.generate') }}', {
+                            const response = await fetch(aiBriefingUrl, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

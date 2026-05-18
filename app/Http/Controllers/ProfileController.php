@@ -16,9 +16,15 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        $data = [
             'user' => $request->user(),
-        ]);
+        ];
+
+        if ($request->user() && $request->user()->role === 'dispatcher') {
+            $data['pilots'] = \App\Models\User::where('role', 'pilot')->get();
+        }
+
+        return view('profile.edit', $data);
     }
 
     /**

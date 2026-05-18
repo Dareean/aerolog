@@ -35,8 +35,9 @@ class DashboardController extends Controller
             
         } elseif ($user->role === 'dispatcher') {
             $recentLogs = FlightLog::with(['user', 'route'])->latest()->take(20)->get();
-            
-            return view('dashboard', compact('recentLogs'));
+            $pilots = \App\Models\User::where('role', 'pilot')->get();
+
+            return view('dashboard', compact('recentLogs', 'pilots'));
         }
 
         return view('dashboard');

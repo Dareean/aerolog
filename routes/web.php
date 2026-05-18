@@ -6,6 +6,7 @@ use App\Http\Controllers\RouteController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PilotsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,6 +21,11 @@ Route::get('/flights/create', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    // Pilot management (dispatcher only)
+    Route::post('/pilots', [PilotsController::class, 'store'])->name('pilots.store');
+    Route::put('/pilots/{pilot}', [PilotsController::class, 'update'])->name('pilots.update');
+    Route::post('/pilots/{pilot}/toggle', [PilotsController::class, 'toggle'])->name('pilots.toggle');
     
     Route::post('/flight-logs', [FlightLogController::class, 'store'])->name('flight-logs.store');
     

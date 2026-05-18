@@ -38,10 +38,57 @@
                 Overview
             </a>
             
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
+            <a id="nav-settings" href="{{ route('profile.edit') }}#personal-settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 Settings
             </a>
+            @if(Auth::user() && Auth::user()->role === 'dispatcher')
+                <a id="nav-pilots" href="{{ route('profile.edit') }}#pilot-management" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
+                    <span class="material-symbols-outlined text-[20px]">people</span>
+                    Pilot Accounts
+                </a>
+            @endif
+
+            <script>
+                // Client-side: distinguish Settings vs Pilot Management (hash)
+                document.addEventListener('DOMContentLoaded', function () {
+                    const settingsLink = document.getElementById('nav-settings');
+                    const pilotsLink = document.getElementById('nav-pilots');
+                    if (!settingsLink || !pilotsLink) return;
+
+                    const activeClasses = ['bg-[#f0f4f8]', 'text-[#0d74ce]', 'font-semibold'];
+                    const inactiveClasses = ['text-on-surface-variant', 'hover:bg-surface-bright', 'hover:text-primary', 'transition-colors', 'font-medium'];
+
+                    function setActiveLink(linkToActivate) {
+                        [settingsLink, pilotsLink].forEach(link => {
+                            // remove active classes
+                            activeClasses.forEach(c => link.classList.remove(c));
+                            // remove inactive classes
+                            inactiveClasses.forEach(c => link.classList.remove(c));
+                            // reset to inactive base
+                            link.classList.add('text-on-surface-variant', 'hover:bg-surface-bright', 'hover:text-primary', 'transition-colors', 'font-medium');
+                        });
+
+                        // apply active classes to chosen link
+                        linkToActivate.classList.remove('text-on-surface-variant','hover:bg-surface-bright','hover:text-primary','transition-colors','font-medium');
+                        activeClasses.forEach(c => linkToActivate.classList.add(c));
+                    }
+
+                    function updateByHash() {
+                        if (window.location.hash === '#pilot-management') {
+                            setActiveLink(pilotsLink);
+                        } else if (window.location.pathname.endsWith('/profile') || window.location.pathname.endsWith('/profile/')) {
+                            setActiveLink(settingsLink);
+                        }
+                    }
+
+                    // initial
+                    updateByHash();
+
+                    // react to hash changes
+                    window.addEventListener('hashchange', updateByHash);
+                });
+            </script>
         </nav>
 
         <!-- Logout -->
