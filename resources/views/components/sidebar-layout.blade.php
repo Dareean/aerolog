@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'AeroLog Dashboard' }}</title>
+    <title>{{ $title ?? __('AeroLog Dashboard') }}</title>
     <!-- Fonts + Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
@@ -35,17 +35,17 @@
         <nav class="flex-grow px-4 space-y-1 overflow-y-auto">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('dashboard') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                Overview
+                {{ __('Overview') }}
             </a>
             
             <a id="nav-settings" href="{{ route('profile.edit') }}#personal-settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
-                Settings
+                {{ __('Settings') }}
             </a>
             @if(Auth::user() && Auth::user()->role === 'dispatcher')
                 <a id="nav-pilots" href="{{ route('profile.edit') }}#pilot-management" class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#f0f4f8] text-[#0d74ce] font-semibold' : 'text-on-surface-variant hover:bg-surface-bright hover:text-primary transition-colors font-medium' }} text-[14px]">
                     <span class="material-symbols-outlined text-[20px]">people</span>
-                    Pilot Accounts
+                    {{ __('Pilot Accounts') }}
                 </a>
             @endif
 
@@ -97,7 +97,7 @@
                 @csrf
                 <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#ba1a1a] hover:bg-[#fff2f2] transition-colors font-medium text-[14px]">
                     <span class="material-symbols-outlined text-[20px]">logout</span>
-                    Sign Out
+                    {{ __('Sign Out') }}
                 </a>
             </form>
         </div>

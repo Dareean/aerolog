@@ -17,8 +17,8 @@
             <div class="max-w-6xl w-full mx-auto flex items-center justify-between">
                 <div class="text-lg font-semibold">AeroLog</div>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('dashboard') }}" class="text-sm font-medium text-[#171717]">Dashboard</a>
-                    <a href="{{ route('flights.create') }}" class="text-sm font-medium text-[#0d74ce]">Log Flight</a>
+                    <a href="{{ route('dashboard') }}" class="text-sm font-medium text-[#171717]">{{ __('Dashboard') }}</a>
+                    <a href="{{ route('flights.create') }}" class="text-sm font-medium text-[#0d74ce]">{{ __('Log Flight') }}</a>
                 </div>
             </div>
         </nav>
