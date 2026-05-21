@@ -1,6 +1,13 @@
 <x-app-layout :noNav="true">
     <div class="min-h-screen flex items-center justify-center bg-[#fcf9f8] py-12 px-4 sm:px-6 lg:px-8">
-        <div class="w-full max-w-[480px] bg-canvas border border-surface-strong rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-8 sm:p-10">
+        <div class="w-full max-w-[480px] bg-canvas border border-surface-strong rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-8 sm:p-10" data-reveal>
+            <div class="mb-6">
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-medium text-[#0d74ce] hover:underline">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    {{ __('Back to home') }}
+                </a>
+            </div>
+
             <!-- Logo -->
             <div class="text-center mb-6">
                 <span class="font-display-sm text-[20px] font-bold tracking-tighter text-primary">AeroLog</span>
@@ -8,6 +15,9 @@
 
             <!-- Headers -->
             <div class="text-center mb-8">
+                <div class="mb-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#0d74ce]">
+                    <span class="type-cursor" data-typewriter='@json([__("Daftar dan mulai logging."), __("Bangun profil operasionalmu."), __("Siap dipakai dalam hitungan menit.")])'>{{ __('Daftar dan mulai logging.') }}</span>
+                </div>
                 <h1 class="font-display-md text-[28px] font-bold text-primary mb-2 tracking-tight">{{ __('Create an account') }}</h1>
                 <p class="font-body-md text-[15px] text-on-surface-variant">{{ __('Join the next generation of flight logging.') }}</p>
             </div>

@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12" data-reveal>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6" data-reveal>
                 <h3 class="text-lg font-bold mb-4">Daftar Log Penerbangan</h3>
                 <table class="w-full table-auto border-collapse border border-gray-300">
                     <thead>

@@ -1,6 +1,6 @@
 @props(['title' => null, 'noNav' => false])
 <!doctype html>
-<html lang="en">
+<html lang="en" class="js">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="bg-canvas text-on-surface antialiased font-body-md min-h-screen flex flex-col">
+    <body class="bg-canvas text-on-surface antialiased font-body-md min-h-screen flex flex-col">
     <div class="min-h-screen">
         @unless($noNav)
         <nav class="h-16 bg-white border-b border-[#f0f0f3] flex items-center px-6">
@@ -33,7 +33,9 @@
         @endif
 
         <main>
-            {{ $slot }}
+            <div data-page-shell>
+                {{ $slot }}
+            </div>
         </main>
     </div>
 </body>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="js">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,10 @@
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg" data-page-shell>
+                <div class="mb-4 text-center text-[12px] font-semibold uppercase tracking-[0.18em] text-[#0d74ce]">
+                    <span class="type-cursor" data-typewriter='@json([__("Akses aman AeroLog."), __("Lanjutkan tanpa hambatan."), __("Siap login kembali?")])'>{{ __('Akses aman AeroLog.') }}</span>
+                </div>
                 {{ $slot }}
             </div>
         </div>

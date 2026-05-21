@@ -9,4 +9,34 @@
 	.mono-tile {
 		@apply font-metrics-mono text-metrics-mono bg-canvas-soft border border-surface-strong p-xl rounded-lg;
 	}
+
+	html.js [data-reveal],
+	html.js [data-page-shell] {
+		opacity: 0;
+		transform: translateY(18px);
+		transition: opacity 680ms ease, transform 680ms ease;
+		will-change: opacity, transform;
+	}
+
+	html.js [data-reveal].is-visible,
+	html.js [data-page-shell].is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.type-cursor::after {
+		content: '';
+		display: inline-block;
+		width: 1px;
+		height: 1em;
+		margin-left: 4px;
+		background: currentColor;
+		vertical-align: -0.15em;
+		animation: typeBlink 900ms steps(1) infinite;
+	}
+
+	@keyframes typeBlink {
+		0%, 49% { opacity: 1; }
+		50%, 100% { opacity: 0; }
+	}
 }

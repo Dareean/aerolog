@@ -1,21 +1,22 @@
 <x-sidebar-layout title="Settings">
-    <section>
+    @php($defaultTab = Auth::user()->role === 'dispatcher' ? 'pilot-management' : 'personal-settings')
+    <section data-reveal>
         <header class="mb-xl">
             <h1 class="font-display-lg text-[28px] font-bold text-primary mb-1">Account Settings</h1>
             <p class="font-body-md text-on-surface-variant">Manage your profile, password, and security preferences.</p>
         </header>
 
         <div class="space-y-6">
-            <div id="personal-settings">
+            <div id="personal-settings" data-reveal>
                 <!-- Profile Information -->
-                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8">
+                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8" data-reveal>
                     <div class="max-w-xl">
                         @include('profile.partials.update-profile-information-form')
                     </div>
                 </div>
 
                 <!-- Update Password -->
-                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8">
+                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-8" data-reveal>
                     <div class="max-w-xl">
                         @include('profile.partials.update-password-form')
                     </div>
@@ -24,7 +25,7 @@
 
             @if(Auth::user()->role === 'dispatcher')
                 <!-- Pilot Management (Settings Page) -->
-                <div id="pilot-management" class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-6">
+                <div id="pilot-management" class="bg-canvas border border-surface-strong rounded-xl shadow-sm p-6" data-reveal>
                     <div class="p-2 mb-4 flex justify-between items-center">
                         <h2 class="font-title-md text-[16px] font-bold text-primary">Pilot Management</h2>
                         <button id="createPilotBtn" class="bg-primary text-on-primary h-[36px] px-4 rounded-md text-[13px]">Add Pilot</button>
@@ -125,9 +126,10 @@
             // Tab switching: show personal-settings or pilot-management based on hash
             const personalEl = document.getElementById('personal-settings');
             const pilotEl = document.getElementById('pilot-management');
+            const defaultTab = "{{ $defaultTab }}";
 
             function updateTabs() {
-                const hash = window.location.hash || '#personal-settings';
+                const hash = window.location.hash || `#${defaultTab}`;
                 if (hash === '#pilot-management') {
                     if (personalEl) personalEl.classList.add('hidden');
                     if (pilotEl) pilotEl.classList.remove('hidden');

@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="bg-[#ffffff] py-10">
+    <div class="bg-[#ffffff] py-10" data-reveal>
         <div class="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-            <form action="#" method="POST" class="rounded-xl border border-[#f0f0f3] bg-[#ffffff] p-6 shadow-sm md:p-8">
+            <form action="#" method="POST" class="rounded-xl border border-[#f0f0f3] bg-[#ffffff] p-6 shadow-sm md:p-8" data-reveal>
                 @csrf
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">

@@ -1,6 +1,6 @@
 @props(['title' => null])
 <!doctype html>
-<html lang="en">
+<html lang="en" class="js">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -104,7 +104,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#fcf9f8]">
+        <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#fcf9f8]">
         <!-- Topbar -->
         <header class="h-[72px] bg-canvas border-b border-surface-strong flex items-center justify-between px-8 flex-shrink-0">
             <h1 class="font-display-sm text-[20px] font-bold text-primary">{{ $title ?? 'Dashboard' }}</h1>
@@ -115,7 +115,7 @@
 
         <!-- Scrollable Content Area -->
         <div class="flex-1 overflow-y-auto p-8">
-            <div class="max-w-[1200px] mx-auto">
+            <div class="max-w-[1200px] mx-auto" data-page-shell>
                 {{ $slot }}
             </div>
         </div>
