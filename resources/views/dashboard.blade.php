@@ -141,10 +141,9 @@
                                 <th class="p-4">{{ __('FLIGHT NO') }}</th>
                                 <th class="p-4">{{ __('ROUTE') }}</th>
                                 <th class="p-4">{{ __('LANDING SCORE') }}</th>
-                                <th class="p-4">{{ __('STATUS') }}</th>
-                                <tr>
-                                    <td colspan="5" class="p-8 text-center text-on-surface-variant">{{ __("You haven't logged any flights yet.") }}</td>
                                 </tr>
+                        </thead>
+                        <tbody class="font-body-sm text-[14px] divide-y divide-surface-strong bg-white">
                             @forelse($pilotFlightLogs as $log)
                                 @php
                                     $isHardLanding = $log->landing_rate && $log->landing_rate < -400;
@@ -258,22 +257,40 @@
                 </div>
 
                 <!-- Pilot Roster Management -->
-                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-canvas border border-surface-strong rounded-xl shadow-sm overflow-hidden flex flex-col" id="pilot-management">
                     <div class="p-6 border-b border-surface-strong bg-[#fcf9f8] flex justify-between items-center">
                         <h2 class="font-title-md text-[16px] font-bold text-primary">{{ __('Pilot Roster') }}</h2>
+                        <button onclick="document.getElementById('addPilotModal').classList.remove('hidden')" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-button-label text-[13px] font-medium hover:bg-[#171717] transition-colors shadow-sm flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px]">add</span> Add Pilot
+                        </button>
                     </div>
                     <div class="p-4 flex-grow flex flex-col gap-3 overflow-y-auto max-h-[600px]">
                         @forelse($pilots ?? [] as $pilot)
-                            <div class="p-4 border border-surface-strong rounded-lg bg-white flex flex-col gap-2 shadow-sm">
+                            <div class="p-4 border border-surface-strong rounded-lg bg-white flex flex-col gap-2 shadow-sm {{ !$pilot->is_active ? 'opacity-60' : '' }}">
                                 <div class="flex justify-between items-start">
                                     <div class="overflow-hidden">
                                         <h3 class="font-bold text-primary text-[14px] truncate">{{ $pilot->full_name }}</h3>
                                         <p class="font-metrics-mono text-[11px] text-on-surface-variant truncate">{{ $pilot->email }}</p>
                                     </div>
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="openEditPilotModal({{ $pilot->id }}, '{{ addslashes($pilot->full_name) }}', '{{ addslashes($pilot->email) }}', {{ $pilot->is_active ? 'true' : 'false' }})" class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-[#fcf9f8] rounded transition-colors" title="Edit Pilot">
+                                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                                        </button>
+                                        <form method="POST" action="{{ route('pilots.toggle', $pilot->id) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="p-1.5 {{ $pilot->is_active ? 'text-[#ba1a1a] hover:bg-[#fff2f2]' : 'text-[#137333] hover:bg-[#e6f4ea]' }} rounded transition-colors" title="{{ $pilot->is_active ? 'Deactivate' : 'Reactivate' }}">
+                                                <span class="material-symbols-outlined text-[16px]">{{ $pilot->is_active ? 'block' : 'check_circle' }}</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                                 <div class="mt-2 flex items-center justify-between">
+                                    @if($pilot->is_active)
                                         <span class="inline-flex px-2.5 py-1 rounded-full bg-[#e6f4ea] text-[#137333] font-label-caps text-[10px] font-bold tracking-wider">{{ __('ACTIVE') }}</span>
-                                        <div class="text-[11px] font-medium text-on-surface-variant">
+                                    @else
+                                        <span class="inline-flex px-2.5 py-1 rounded-full bg-[#fff2f2] text-[#ba1a1a] font-label-caps text-[10px] font-bold tracking-wider">{{ __('INACTIVE') }}</span>
+                                    @endif
+                                    <div class="text-[11px] font-medium text-on-surface-variant">
                                         {{ $pilot->flightLogs()->count() }} {{ __('logs') }}
                                     </div>
                                 </div>
@@ -286,6 +303,81 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Modals -->
+            <!-- Add Pilot Modal -->
+            <div id="addPilotModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+                    <div class="p-6 border-b border-surface-strong flex justify-between items-center">
+                        <h2 class="font-title-md text-[18px] font-bold text-primary">Add New Pilot</h2>
+                        <button onclick="document.getElementById('addPilotModal').classList.add('hidden')" class="text-on-surface-variant hover:text-primary">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('pilots.store') }}" class="p-6 space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">FULL NAME</label>
+                            <input type="text" name="full_name" required class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm" placeholder="e.g. John Doe">
+                        </div>
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">EMAIL</label>
+                            <input type="email" name="email" required class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm" placeholder="pilot@aerolog.com">
+                        </div>
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">DEFAULT PASSWORD</label>
+                            <input type="text" name="password" required class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm" value="Aerolog2026">
+                            <p class="text-[11px] text-on-surface-variant mt-1">Pilot can change this later.</p>
+                        </div>
+                        <div class="pt-2 flex justify-end gap-3">
+                            <button type="button" onclick="document.getElementById('addPilotModal').classList.add('hidden')" class="px-5 py-2.5 text-[14px] font-medium text-on-surface-variant hover:text-primary">Cancel</button>
+                            <button type="submit" class="bg-primary text-on-primary px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-[#171717] shadow-sm">Save Pilot</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Pilot Modal -->
+            <div id="editPilotModal" class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+                    <div class="p-6 border-b border-surface-strong flex justify-between items-center">
+                        <h2 class="font-title-md text-[18px] font-bold text-primary">Edit Pilot</h2>
+                        <button onclick="document.getElementById('editPilotModal').classList.add('hidden')" class="text-on-surface-variant hover:text-primary">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <form method="POST" id="editPilotForm" class="p-6 space-y-4">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">FULL NAME</label>
+                            <input type="text" id="edit_full_name" name="full_name" required class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">EMAIL</label>
+                            <input type="email" id="edit_email" name="email" required class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block font-label-caps text-[12px] font-semibold text-on-surface-variant mb-2">NEW PASSWORD (OPTIONAL)</label>
+                            <input type="text" name="password" class="w-full h-[44px] border border-[#e5e2e1] rounded-lg px-4 focus:border-primary focus:outline-none font-body-sm text-primary shadow-sm" placeholder="Leave blank to keep current">
+                        </div>
+                        <div class="pt-2 flex justify-end gap-3">
+                            <button type="button" onclick="document.getElementById('editPilotModal').classList.add('hidden')" class="px-5 py-2.5 text-[14px] font-medium text-on-surface-variant hover:text-primary">Cancel</button>
+                            <button type="submit" class="bg-primary text-on-primary px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-[#171717] shadow-sm">Update Pilot</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function openEditPilotModal(id, fullName, email, isActive) {
+                    const form = document.getElementById('editPilotForm');
+                    form.action = `/pilots/${id}`;
+                    document.getElementById('edit_full_name').value = fullName;
+                    document.getElementById('edit_email').value = email;
+                    document.getElementById('editPilotModal').classList.remove('hidden');
+                }
+            </script>
         </section>
     @else
         <!-- NO ROLE SET / ERROR -->
@@ -327,17 +419,17 @@
                             const data = await response.json();
                             if (response.ok) {
                                 // Add styling to make it look technical
-                                let formattedBriefing = data.briefing.replace(new RegExp(origin, 'g'), `<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${origin}</span>`);
-                                formattedBriefing = formattedBriefing.replace(new RegExp(destination, 'g'), `<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${destination}</span>`);
+                                let formattedBriefing = data.briefing.split(origin).join(`<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${origin}</span>`);
+                                formattedBriefing = formattedBriefing.split(destination).join(`<span class="font-metrics-mono text-primary bg-surface-dim/30 px-1.5 py-0.5 rounded text-[13px] border border-surface-strong">${destination}</span>`);
                                 
                                 briefingText.innerHTML = formattedBriefing;
                                 savingsText.innerText = `+${data.savings} kg`;
                             } else {
-                                briefingText.innerText = data.briefing || {{ json_encode(__('Failed to generate briefing.')) }};
+                                briefingText.innerText = data.briefing || @json(__('Failed to generate briefing.'));
                                 savingsText.innerText = '+0 kg';
                             }
                         } catch (error) {
-                            briefingText.innerText = {{ json_encode(__('Connection to AI dispatch failed.')) }};
+                            briefingText.innerText = @json(__('Connection to AI dispatch failed.'));
                             savingsText.innerText = '+0 kg';
                         }
                     }

@@ -12,7 +12,7 @@ class AIBriefingController extends Controller
         $distanceHint = rand(60, 180);
 
         return [
-            'briefing' => "Route {$origin} to {$destination} remains within standard dispatch tolerances. Expect stable enroute conditions with moderate crosswind variability and plan a conservative descent profile.",
+            'briefing' => "Rute penerbangan dari {$origin} ke {$destination} berada dalam batas toleransi standar. Kondisi cuaca diperkirakan stabil dengan sedikit variasi angin silang, direkomendasikan untuk melakukan pendekatan turun (descent) yang konservatif.",
             'savings' => $distanceHint,
         ];
     }
@@ -42,7 +42,7 @@ class AIBriefingController extends Controller
 
         $prompt = "You are a senior aviation dispatcher AI for AeroLog Airlines. "
                 . "A pilot is flying from $origin to $destination. "
-                . "Provide a very concise, professional 2-sentence route and weather briefing. "
+                . "Provide a very concise, professional 2-sentence route and weather briefing IN INDONESIAN (Bahasa Indonesia). "
                 . "Include simulated technical details like crosswinds, turbulence, or recommended flight levels (FL) referencing the airports. "
                 . "Also simulate a fuel savings amount in kg (an integer between 50 and 400). "
                 . "Output STRICTLY in JSON format with exactly two keys: \"briefing\" (string) and \"savings\" (integer). No markdown formatting, no code blocks.";
